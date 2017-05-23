@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.3.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd">
+
+	<context:component-scan base-package="com.remisiones" />
+	<context:property-placeholder location="classpath:jdbc.properties" />
+	<mvc:annotation-driven />
+
+	<bean id="urlMapping"
+		class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+		<property name="mappings">
+			<props>
+				<prop key="home.htm">homeController</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean id="jspViewResolver"
+		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="prefix" value="/WEB-INF/jsp/" />
+		<property name="suffix" value=".jsp" />
+	</bean>
+
+	<!-- <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"> 
+		<property name="location"> <value>classpath:jdbc.properties</value> </property> 
+		</bean> -->
+
+	<bean id="dataSource"
+		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName" value="${jdbc.driverClassName}" />
+		<property name="url" value="${jdbc.url}" />
+		<property name="username" value="${jdbc.username}" />
+		<property name="password" value="${jdbc.password}" />
+	</bean>
+
+
+	<bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+		<constructor-arg ref="dataSource" />
+	</bean>
+
+	<bean id="homeController" class="com.remisiones.HomeController">
+		<constructor-arg ref="jdbcTemplate" />
+	</bean>
+
+	<bean id="rolDao" class="com.r.remisiones.dao.seguridad.RolDaoImpl">
+		<constructor-arg ref="jdbcTemplate" />
+	</bean>
+
+	<bean id="UsuarioDao" class="com.r.remisiones.dao.seguridad.UsuarioDAOImp">
+		<constructor-arg ref="jdbcTemplate" />
+	</bean>
+	
+	<bean id="TerceroDao" class="com.r.remisiones.dao.maestros.TerceroDAOImpl">
+		<constructor-arg ref="jdbcTemplate" />
+	</bean>
+	
+	<bean id="PermisoDao" class="com.r.remisiones.dao.seguridad.PermisoDAOImpl">
+		<constructor-arg ref="jdbcTemplate" />
+	</bean>
+
+	<!-- <bean name="homeController" class="com.remisiones.HomeController" /> -->
+</beans>
